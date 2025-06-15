@@ -1,20 +1,22 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace gym_project
 {
-    public class Startup
-    {
-        public void ConfigureServices(IServiceCollection services)
+	public class Startup
+	{
+        private readonly IConfiguration _configuration;
+
+        public Startup(IConfiguration configuration)
         {
-            // Добавьте JWT-аутентификацию
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
+            this._configuration = configuration;
+        }
+        public void ConfigureServices(IServiceCollection services)
+		{
+            services.AddAuthentication("SomeOtherScheme")
+            .AddJwtBearer("SomeOtherScheme", options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -41,22 +43,23 @@ namespace gym_project
                 };
             });
 
-            services.AddControllers();
-        }
+            services.AddAuthorization();
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
+			services.AddControllers();
+		}
+
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		{
             app.UseRouting();
 
-            app.UseSession();
-
             app.UseAuthentication();
-            app.UseAuthorization();
+
+			app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-        }
-    }
+			{
+				endpoints.MapControllers();
+			});
+		}
+	}
 }

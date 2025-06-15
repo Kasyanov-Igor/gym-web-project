@@ -32,7 +32,8 @@ namespace gym_project.Controllers
 			this._repository = repository ?? throw new ArgumentNullException(nameof(repository));
 		}
 
-		[HttpPost("register")]
+        [AllowAnonymous]
+        [HttpPost("register")]
 		public async Task<IActionResult> RegisterUser([FromForm] DTOClient userDto)
 		{
 			if (!ModelState.IsValid)

@@ -4,6 +4,7 @@ using gym_project_business_logic.Services.Interface;
 using Model.Entities;
 using gym_project_business_logic.Repositories;
 using gym_project_business_logic.Repositories.Interface;
+using gym_project;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,6 +81,8 @@ builder.Services.AddScoped<IRepository<Client>>(option =>
 	return new TransactionalRepositoryDecorator<Client>(adb, repo);
 });
 
+var startup = new Startup(builder.Configuration);
+startup.ConfigureServices(builder.Services);
 
 var app = builder.Build();
 
